@@ -19,7 +19,7 @@ def main():
     try:
         # Streamlit 실행
         subprocess.run([
-            sys.executable, "-m", "streamlit", "run", "test_ui.py",
+            sys.executable, "-m", "streamlit", "run", "streamlit_pages/test_ui.py",
             "--server.port", "8501",
             "--server.address", "localhost"
         ])

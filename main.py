@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from app.core.config import settings
 from app.utils.logging import setup_logging, get_logger
 from app.api.endpoints.chat import router as chat_router
+from app.api.endpoints.profile import router as profile_router
 
 
 @asynccontextmanager
@@ -43,6 +44,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(chat_router, prefix="/api/v1")
+app.include_router(profile_router, prefix="/api/v1")
 
 
 @app.get("/")

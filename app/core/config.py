@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     # CORS Settings - Handle as string then convert to list
     cors_origins: Optional[str] = None
     
+    # Supabase Settings
+    supabase_url: Optional[str] = None
+    supabase_key: Optional[str] = None
+    
     @property
     def cors_origins_list(self) -> List[str]:
         """Convert cors_origins string to list"""

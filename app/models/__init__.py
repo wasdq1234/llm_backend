@@ -1,1 +1,4 @@
-"""Data models and schemas""" 
+"""Data models and schemas"""
+
+from .chat import *
+from .profile import *

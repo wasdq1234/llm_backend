@@ -8,19 +8,34 @@ import json
 from datetime import datetime
 import asyncio
 import httpx
+from streamlit_pages.profile_manager import render_profile_manager
 
 # 페이지 설정
 st.set_page_config(
-    page_title="FastAPI 엔드포인트 테스터",
+    page_title="FastAPI 시스템 관리",
     page_icon="🔧",
     layout="wide"
 )
 
-st.title("🔧 FastAPI 엔드포인트 테스터")
+st.title("🔧 FastAPI 시스템 관리")
 
 # 서버 설정
 st.sidebar.header("서버 설정")
 base_url = st.sidebar.text_input("Base URL", "http://localhost:8000")
+
+# 페이지 선택
+st.sidebar.header("메뉴")
+page = st.sidebar.selectbox(
+    "선택하세요",
+    ["📡 API 테스터", "👤 프로필 관리"]
+)
+
+if page == "👤 프로필 관리":
+    render_profile_manager(base_url)
+    st.stop()
+
+# API 테스터 페이지
+st.header("📡 API 엔드포인트 테스터")
 
 # 엔드포인트 선택
 st.sidebar.header("엔드포인트 선택")
