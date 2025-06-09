@@ -9,6 +9,7 @@ from datetime import datetime
 import asyncio
 import httpx
 from streamlit_pages.profile_manager import render_profile_manager
+from streamlit_pages.career_manager import render_career_manager
 
 # 페이지 설정
 st.set_page_config(
@@ -27,11 +28,15 @@ base_url = st.sidebar.text_input("Base URL", "http://localhost:8000")
 st.sidebar.header("메뉴")
 page = st.sidebar.selectbox(
     "선택하세요",
-    ["📡 API 테스터", "👤 프로필 관리"]
+    ["📡 API 테스터", "👤 프로필 관리", "💼 Career 관리"]
 )
 
 if page == "👤 프로필 관리":
     render_profile_manager(base_url)
+    st.stop()
+
+if page == "💼 Career 관리":
+    render_career_manager(base_url)
     st.stop()
 
 # API 테스터 페이지

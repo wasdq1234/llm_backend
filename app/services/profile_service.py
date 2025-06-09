@@ -87,6 +87,11 @@ class ProfileService:
         try:
             data = career_data.model_dump()
             data['profile_id'] = str(data['profile_id'])
+            # date 객체를 문자열로 변환
+            if 'start_date' in data and data['start_date']:
+                data['start_date'] = str(data['start_date'])
+            if 'end_date' in data and data['end_date']:
+                data['end_date'] = str(data['end_date'])
             result = self.client.table('careers').insert(data).execute()
             if result.data:
                 return Career(**result.data[0])
@@ -119,6 +124,12 @@ class ProfileService:
             if not update_data:
                 return await self.get_career_by_id(career_id)
             
+            # date 객체를 문자열로 변환
+            if 'start_date' in update_data and update_data['start_date']:
+                update_data['start_date'] = str(update_data['start_date'])
+            if 'end_date' in update_data and update_data['end_date']:
+                update_data['end_date'] = str(update_data['end_date'])
+            
             result = self.client.table('careers').update(update_data).eq('id', str(career_id)).execute()
             if result.data:
                 return Career(**result.data[0])
@@ -140,6 +151,11 @@ class ProfileService:
         try:
             data = project_data.model_dump()
             data['career_id'] = str(data['career_id'])
+            # date 객체를 문자열로 변환
+            if 'start_date' in data and data['start_date']:
+                data['start_date'] = str(data['start_date'])
+            if 'end_date' in data and data['end_date']:
+                data['end_date'] = str(data['end_date'])
             result = self.client.table('projects').insert(data).execute()
             if result.data:
                 return Project(**result.data[0])
@@ -171,6 +187,12 @@ class ProfileService:
             update_data = {k: v for k, v in project_data.model_dump().items() if v is not None}
             if not update_data:
                 return await self.get_project_by_id(project_id)
+            
+            # date 객체를 문자열로 변환
+            if 'start_date' in update_data and update_data['start_date']:
+                update_data['start_date'] = str(update_data['start_date'])
+            if 'end_date' in update_data and update_data['end_date']:
+                update_data['end_date'] = str(update_data['end_date'])
             
             result = self.client.table('projects').update(update_data).eq('id', str(project_id)).execute()
             if result.data:

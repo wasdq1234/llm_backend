@@ -183,11 +183,11 @@ curl -X POST "http://localhost:8000/api/v1/profiles/careers/{career_id}/projects
 ### UI 실행
 
 ```bash
-# Streamlit UI 실행
-python run_profile_ui.py
+# 통합 테스트 UI 실행 (채팅 API 테스터)
+python run_test_ui.py
 
-# 또는 직접 실행
-uv run streamlit run test_ui.py
+# Career 관리 전용 UI 실행 (새로 추가됨!)
+streamlit run streamlit_pages/career_manager.py
 ```
 
 ### UI 기능
@@ -198,6 +198,12 @@ uv run streamlit run test_ui.py
   - ➕ 새 프로필 생성
   - ✏️ 프로필 편집 (기본정보, 경력사항, 프로젝트)
   - 📊 전체 정보 조회 (이력서 형태)
+- **💼 Career 관리 시스템** (새로 추가!):
+  - 🎯 프로필 선택 및 정보 확인
+  - 📋 Career 목록 조회 (근무 기간 자동 계산)
+  - ➕ Career 추가 (현재 재직중 옵션 포함)
+  - ✏️ Career 편집 및 삭제
+  - 🔄 실시간 데이터 동기화
 
 ### 사용법
 

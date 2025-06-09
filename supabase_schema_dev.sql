@@ -1,5 +1,11 @@
--- 프로필 관리 시스템 데이터베이스 스키마
+-- 프로필 관리 시스템 데이터베이스 스키마 (개발용)
 -- Supabase에서 실행할 SQL 스크립트
+-- 사용자 인증이 없는 개발 환경을 위해 RLS를 비활성화합니다
+
+-- 기존 테이블이 있다면 삭제 (주의: 실제 데이터가 삭제됩니다!)
+DROP TABLE IF EXISTS projects CASCADE;
+DROP TABLE IF EXISTS careers CASCADE;
+DROP TABLE IF EXISTS profiles CASCADE;
 
 -- 1. 프로필 기본 정보 테이블
 CREATE TABLE profiles (
@@ -69,60 +75,10 @@ CREATE TRIGGER update_projects_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
--- Row Level Security (RLS) 설정
--- 개발 중에는 아래 ENABLE 라인들을 주석 처리하거나 
--- 개발용 스키마 파일(supabase_schema_dev.sql)을 사용하세요
-
--- ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE careers ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
-
--- 또는 개발용 임시 정책 (모든 사용자가 모든 데이터에 접근 가능)
--- 프로덕션에서는 아래 정책들을 삭제하고 위의 사용자별 정책을 활성화하세요
-
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE careers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
-
--- 개발용 임시 정책 (모든 사용자 접근 허용)
-CREATE POLICY "Allow all access to profiles" ON profiles
-    FOR ALL USING (true);
-
-CREATE POLICY "Allow all access to careers" ON careers
-    FOR ALL USING (true);
-
-CREATE POLICY "Allow all access to projects" ON projects
-    FOR ALL USING (true);
-
--- 프로덕션용 RLS 정책 (사용자 인증이 구현된 경우에만 적용)
--- 개발이 완료되면 위의 임시 정책들을 삭제하고 아래 정책들을 활성화하세요
-/*
-DROP POLICY "Allow all access to profiles" ON profiles;
-DROP POLICY "Allow all access to careers" ON careers;
-DROP POLICY "Allow all access to projects" ON projects;
-
-CREATE POLICY "Users can access their own profiles" ON profiles
-    FOR ALL USING (auth.uid()::text = id::text);
-
-CREATE POLICY "Users can access their own careers" ON careers
-    FOR ALL USING (
-        EXISTS (
-            SELECT 1 FROM profiles 
-            WHERE profiles.id = careers.profile_id 
-            AND auth.uid()::text = profiles.id::text
-        )
-    );
-
-CREATE POLICY "Users can access their own projects" ON projects
-    FOR ALL USING (
-        EXISTS (
-            SELECT 1 FROM careers 
-            JOIN profiles ON profiles.id = careers.profile_id
-            WHERE careers.id = projects.career_id 
-            AND auth.uid()::text = profiles.id::text
-        )
-    );
-*/
+-- 개발용: RLS 비활성화 (모든 사용자가 모든 데이터에 접근 가능)
+ALTER TABLE profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE careers DISABLE ROW LEVEL SECURITY;
+ALTER TABLE projects DISABLE ROW LEVEL SECURITY;
 
 -- 샘플 데이터 (테스트용)
 INSERT INTO profiles (name, address, phone, email, bio) VALUES 
@@ -136,4 +92,7 @@ INSERT INTO projects (career_id, project_name, start_date, end_date, description
 ((SELECT id FROM careers WHERE company_name = '테크스타트업'), 
  'AI 챗봇 시스템', '2023-06-01', '2024-02-01', 
  'LLM을 활용한 고객 서비스 챗봇 시스템 개발', 
- ARRAY['Python', 'FastAPI', 'LangChain', 'PostgreSQL', 'Docker']); 
+ ARRAY['Python', 'FastAPI', 'LangChain', 'PostgreSQL', 'Docker']);
+
+-- 확인용 메시지
+SELECT 'Profile management tables created successfully! RLS is disabled for development.' as status; 
