@@ -104,10 +104,9 @@ async def stream_chat(
         )
 
 
-@router.post("/profile/{profile_id}/stream")
-async def stream_chat_with_profile(
-    profile_id: str,
-    request: ChatRequest
+@router.post("/stream_tools")
+async def stream_chat_with_tools(
+    request: ChatRequest,
 ):
     """프로필 기반 도구를 사용한 스트리밍 채팅"""
     try:
@@ -116,7 +115,7 @@ async def stream_chat_with_profile(
         async def generate_stream():
             async for chunk in chat_tool_service.stream_chat_with_profile_tools(
                 message=request.message,
-                profile_id=profile_id,
+                profile_id=request.profile_id,
                 messages=request.messages,
                 conversation_id=request.conversation_id,
                 model=request.model

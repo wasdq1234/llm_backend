@@ -190,7 +190,8 @@ class ChatToolService:
             }
             
             # Stream through graph
-            async for chunk in self.graph.astream(input_data, config=config, stream_mode="updates"):
+            # async for chunk in self.graph.astream(input_data, config=config, stream_mode="updates"):
+            async for chunk in self.graph.astream(input_data, config=config):
                 for node_name, node_output in chunk.items():
                     
                     if node_name == "agent":
@@ -201,6 +202,7 @@ class ChatToolService:
                                     # 도구 호출이 있는 경우
                                     if hasattr(msg, 'tool_calls') and msg.tool_calls:
                                         for tool_call in msg.tool_calls:
+                                            print(f"도구 호출 중: {tool_call['name']}")
                                             yield StreamChunk(
                                                 content=f"도구 호출 중: {tool_call['name']}",
                                                 conversation_id=conversation_id,
@@ -210,6 +212,7 @@ class ChatToolService:
                                     
                                     # AI 응답 내용이 있는 경우 (최종 응답)
                                     elif hasattr(msg, 'content') and msg.content and msg.content.strip():
+                                        print(f"AI 응답:\n{msg.content}")
                                         yield StreamChunk(
                                             content=f"AI 응답:\n{msg.content}",
                                             conversation_id=conversation_id,
@@ -222,6 +225,7 @@ class ChatToolService:
                         if "messages" in node_output:
                             for msg in node_output["messages"]:
                                 if isinstance(msg, ToolMessage):
+                                    print(f"도구 실행 결과:\n{msg.content}")
                                     yield StreamChunk(
                                         content=f"도구 실행 결과:\n{msg.content}",
                                         conversation_id=conversation_id,
