@@ -121,11 +121,15 @@ class ChatService:
         
         # Prepare messages
         if messages:
-            # Use provided conversation history
+            # Use provided conversation history and add current message
             input_messages = self._convert_messages_to_langchain(messages)
+            input_messages.append(HumanMessage(content=message))
         else:
             # Use single message
             input_messages = [HumanMessage(content=message)]
+        print("##########input_messages###############")
+        print(input_messages)
+        print("##########input_messages###############")
         
         # Prepare input
         input_data = {
@@ -166,12 +170,13 @@ class ChatService:
             
             # Prepare messages
             if messages:
-                # Use provided conversation history
+                # Use provided conversation history and add current message
                 input_messages = self._convert_messages_to_langchain(messages)
+                input_messages.append(HumanMessage(content=message))
             else:
                 # Use single message
                 input_messages = [HumanMessage(content=message)]
-            
+
             # Prepare input
             input_data = {
                 "messages": input_messages,
