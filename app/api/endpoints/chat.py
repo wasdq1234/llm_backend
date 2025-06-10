@@ -30,6 +30,7 @@ async def chat(
         
         response_content = await chat_service.chat(
             message=request.message,
+            messages=request.messages,
             conversation_id=request.conversation_id,
             model=request.model,
             temperature=request.temperature,
@@ -64,6 +65,7 @@ async def stream_chat(
         async def generate_stream():
             async for chunk in chat_service.stream_chat(
                 message=request.message,
+                messages=request.messages,
                 conversation_id=request.conversation_id,
                 model=request.model,
                 temperature=request.temperature,

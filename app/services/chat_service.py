@@ -1,7 +1,7 @@
 """Chat service using LangGraph and LangChain"""
 
 import uuid
-from typing import AsyncGenerator, Optional
+from typing import AsyncGenerator, Optional, List
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
@@ -11,7 +11,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from typing_extensions import Annotated, TypedDict
 
 from app.core.config import settings
-from app.models.chat import StreamChunk
+from app.models.chat import StreamChunk, ChatMessage, MessageRole
 
 
 class ChatState(TypedDict):
@@ -87,9 +87,24 @@ class ChatService:
         
         return workflow.compile(checkpointer=self.memory)
     
+    def _convert_messages_to_langchain(self, messages: List[ChatMessage]) -> List:
+        """Convert ChatMessage list to LangChain message format"""
+        langchain_messages = []
+        
+        for msg in messages:
+            if msg.role == MessageRole.USER:
+                langchain_messages.append(HumanMessage(content=msg.content))
+            elif msg.role == MessageRole.ASSISTANT:
+                langchain_messages.append(AIMessage(content=msg.content))
+            elif msg.role == MessageRole.SYSTEM:
+                langchain_messages.append(SystemMessage(content=msg.content))
+        
+        return langchain_messages
+
     async def chat(
         self,
         message: str,
+        messages: Optional[List[ChatMessage]] = None,
         conversation_id: Optional[str] = None,
         model: Optional[str] = None,
         temperature: Optional[float] = None,
@@ -104,9 +119,17 @@ class ChatService:
         # Create thread config
         config = {"configurable": {"thread_id": conversation_id}}
         
+        # Prepare messages
+        if messages:
+            # Use provided conversation history
+            input_messages = self._convert_messages_to_langchain(messages)
+        else:
+            # Use single message
+            input_messages = [HumanMessage(content=message)]
+        
         # Prepare input
         input_data = {
-            "messages": [HumanMessage(content=message)],
+            "messages": input_messages,
             "conversation_id": conversation_id,
             "model_name": model or settings.default_model
         }
@@ -125,6 +148,7 @@ class ChatService:
     async def stream_chat(
         self,
         message: str,
+        messages: Optional[List[ChatMessage]] = None,
         conversation_id: Optional[str] = None,
         model: Optional[str] = None,
         temperature: Optional[float] = None,
@@ -140,9 +164,17 @@ class ChatService:
             # Create thread config
             config = {"configurable": {"thread_id": conversation_id}}
             
+            # Prepare messages
+            if messages:
+                # Use provided conversation history
+                input_messages = self._convert_messages_to_langchain(messages)
+            else:
+                # Use single message
+                input_messages = [HumanMessage(content=message)]
+            
             # Prepare input
             input_data = {
-                "messages": [HumanMessage(content=message)],
+                "messages": input_messages,
                 "conversation_id": conversation_id,
                 "model_name": model or settings.default_model
             }

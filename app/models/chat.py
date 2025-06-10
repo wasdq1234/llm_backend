@@ -24,6 +24,7 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     """Chat request model"""
     message: str = Field(..., min_length=1, max_length=10000)
+    messages: Optional[List[ChatMessage]] = Field(default=None, description="Conversation history including current message")
     conversation_id: Optional[str] = None
     model: Optional[str] = None
     temperature: Optional[float] = Field(default=None, ge=0.0, le=2.0)
