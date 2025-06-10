@@ -127,9 +127,6 @@ class ChatService:
         else:
             # Use single message
             input_messages = [HumanMessage(content=message)]
-        print("##########input_messages###############")
-        print(input_messages)
-        print("##########input_messages###############")
         
         # Prepare input
         input_data = {
