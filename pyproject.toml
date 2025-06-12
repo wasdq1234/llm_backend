@@ -7,7 +7,7 @@ authors = ["Your Name <your.email@example.com>"]
 packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
-python = ">=3.11"
+python = ">=3.11,<4.0"
 fastapi = ">=0.104.0"
 uvicorn = {extras = ["standard"], version = ">=0.24.0"}
 langchain = ">=0.1.0"
