@@ -227,7 +227,7 @@ class ChatToolService:
                                 if isinstance(msg, ToolMessage):
                                     print(f"도구 실행 결과:\n{msg.content}")
                                     yield StreamChunk(
-                                        content=f"도구 실행 결과:\n{msg.content}",
+                                        content=f"도구 실행 결과:\n완료",
                                         conversation_id=conversation_id,
                                         is_final=False,
                                         chunk_type="tool_result"
