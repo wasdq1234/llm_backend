@@ -44,7 +44,12 @@ class Settings(BaseSettings):
         """Convert cors_origins string to list"""
         if self.cors_origins:
             return [origin.strip() for origin in self.cors_origins.split(',') if origin.strip()]
-        return ["http://localhost:3000", "http://localhost:8080"]
+        # Default to allow common local dev ports and Vercel domain
+        return [
+            "http://localhost:3000", 
+            "http://localhost:8080",
+            "https://portfolio-smoky-iota-20ecu1z2nu.vercel.app"
+        ]
 
 
 # Global settings instance
