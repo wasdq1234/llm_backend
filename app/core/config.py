@@ -43,14 +43,15 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> List[str]:
         """Convert cors_origins string to list"""
         if self.cors_origins:
-            return [origin.strip() for origin in self.cors_origins.split(',') if origin.strip()]
-        # Default to allow common local dev ports and Vercel domain
-        return [
-            "http://localhost:3000", 
-            "http://localhost:8080",
-            "https://portfolio-smoky-iota-20ecu1z2nu.vercel.app"
-        ]
+            origins = [origin.strip() for origin in self.cors_origins.split(',') if origin.strip()]
+            # If '*' is specified, return it as is
+            if '*' in origins:
+                return ["*"]
+            return origins
+        # Return empty list if no CORS_ORIGINS is set (will cause CORS to block all origins)
+        return []
 
 
-# Global settings instance
+# Create global settings instance
+# pydantic BaseSettings automatically loads from .env file
 settings = Settings() 
